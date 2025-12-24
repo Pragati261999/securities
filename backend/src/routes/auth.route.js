@@ -186,32 +186,75 @@ router.post(
   asyncHandler(logout)
 );
 
+// /**
+//  * @swagger
+//  * /api/v1/auth/profile:
+//  *   get:
+//  *     summary: Get logged-in user profile
+//  *     tags: [Auth]
+//  *     security:
+//  *       - BearerAuth: []
+//  *     responses:
+//  *       200:
+//  *         description: Profile data returned
+//  *       401:
+//  *         description: Unauthorized
+//  */
+// router.get(
+//   "/profile",
+//   auth,
+//   (req, res) => {
+//     res.json({
+//       message: "Access granted",
+//       user: {
+//         id: req.user.id,
+//         role: req.user.role,
+//       },
+//     });
+//   }
+// );
+
+
 /**
  * @swagger
- * /api/v1/auth/profile:
+ * /api/v1/user/profile:
  *   get:
  *     summary: Get logged-in user profile
- *     tags: [Auth]
+ *     tags: [User]
  *     security:
  *       - BearerAuth: []
  *     responses:
  *       200:
- *         description: Profile data returned
+ *         description: Profile fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     role:
+ *                       type: string
+ *                     isActive:
+ *                       type: boolean
+ *                     lastLogin:
+ *                       type: string
+ *                       format: date-time
  *       401:
  *         description: Unauthorized
+ *       404:
+ *         description: User not found
  */
-router.get(
-  "/profile",
-  auth,
-  (req, res) => {
-    res.json({
-      message: "Access granted",
-      user: {
-        id: req.user.id,
-        role: req.user.role,
-      },
-    });
-  }
-);
+router.get('/profile', auth, getProfile);
+
 
 module.exports = router;

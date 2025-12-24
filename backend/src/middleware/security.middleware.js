@@ -40,30 +40,52 @@ const securityHeaders = helmet({
 });
 
 // CORS configuration - strict and well-defined
-const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow requests with no origin (mobile apps, Postman, etc.) in development
-    // const allowedOrigins = process.env.ALLOWED_ORIGINS 
-    //   ? process.env.ALLOWED_ORIGINS.split(',')
-    //   : ['http://localhost:3000'];
-    const allowedOrigins = [
-      'http://localhost:4000',  // Swagger UI
-      'http://localhost:3000',  // React frontend
-      process.env.FRONTEND_URL,
-    ].filter(Boolean);
 
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+const allowedOrigins = [
+  "http://localhost:4000",
+  "http://127.0.0.1:4000"
+];
+
+const corsOptions = cors({
+  origin: (origin, callback) => {
+    // allow server, swagger, postman
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      // ❌ DO NOT throw Error here
+      callback(null, false);
     }
   },
-  credentials: true, // Allow cookies
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  exposedHeaders: ['X-Total-Count'],
-  maxAge: 86400, // 24 hours
-};
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+});
+// const corsOptions = {
+//   origin: function (origin, callback) {
+//     // Allow requests with no origin (mobile apps, Postman, etc.) in development
+//     // const allowedOrigins = process.env.ALLOWED_ORIGINS 
+//     //   ? process.env.ALLOWED_ORIGINS.split(',')
+//     //   : ['http://localhost:3000'];
+//     const allowedOrigins = [
+//       'http://localhost:4000',  // Swagger UI
+//       'http://localhost:3000',  // React frontend
+//       process.env.FRONTEND_URL,
+//     ].filter(Boolean);
+
+//     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   },
+//   credentials: true, // Allow cookies
+//   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+//   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+//   exposedHeaders: ['X-Total-Count'],
+//   maxAge: 86400, // 24 hours
+// };
 
 // HTTPS enforcement middleware
 const enforceHTTPS = (req, res, next) => {

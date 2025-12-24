@@ -205,70 +205,28 @@ exports.logout = asyncHandler(async (req, res) => {
     res.json({ message: "Logged out successfully" });
 });
 
+exports.getProfile = asyncHandler(async (req, res) => {
+  const userId = req.user.id;
 
+  const user = await User.findById(userId).select(
+    '-password -refreshToken -failedLoginAttempts -lockoutUntil'
+  );
 
-// exports.generateToken = (user) => {
-//     return jwt.sign(
-//         { id: user._id },
-//         privateKey,
-//         {
-//             algorithm: "RS256",
-//             expiresIn: process.env.JWT_EXPIRES_IN || "1d"
-//         }
-//     );
-// };
+  if (!user) {
+    throw new AppError('User not found', 404);
+  }
 
-// exports.register = async (req, res) => {
-//     try {
-//         const { name, email, password, role } = req.body;
+  res.status(200).json({
+    message: 'Profile fetched successfully',
+    data: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      isActive: user.isActive,
+      lastLogin: user.lastLogin,
+      createdAt: user.createdAt,
+    },
+  });
+});
 
-//         // check if email exists
-//         const exist = await User.findOne({ email });
-//         if (exist) return res.status(400).json({ message: "Email already registered" });
-
-//         // hash password
-//         const hashedPassword = await bcrypt.hash(password, 10);
-
-//         // create user
-//         const user = await User.create({
-//             name,
-//             email,
-//             password: hashedPassword,
-//             role: role || "user"  // default user
-
-//         });
-
-//         res.status(201).json({ message: "User registered", user });
-//     } catch (error) {
-//         res.status(500).json({ message: error.message });
-//     }
-// };
-
-// exports.login = async (req, res) => {
-//     try {
-//         const { email, password } = req.body;
-
-//         // user exists?
-//         const user = await User.findOne({ email });
-//         if (!user) return res.status(400).json({ message: "Invalid credentials" });
-
-//         // match password
-//         const valid = await bcrypt.compare(password, user.password);
-//         if (!valid) return res.status(400).json({ message: "Invalid credentials" });
-
-//         const payload = { id: user._id, role: user.role };
-
-//         const accessToken = generateAccessToken(payload);
-//         const refreshToken = generateRefreshToken(payload);
-
-
-//         res.status(200).json({
-//             message: "Login successful",
-//             accessToken,
-//             refreshToken,
-//         });
-
-//     } catch (error) {
-//         res.status(500).json({ message: error.message });
-//     }
-// };
