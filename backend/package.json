@@ -15,7 +15,7 @@
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
-    "express": "^5.1.0",
+    "express": "^4.22.1",
     "express-mongo-sanitize": "^2.2.0",
     "express-rate-limit": "^8.2.1",
     "fs-extra": "^11.3.2",
@@ -26,6 +26,8 @@
     "mongoose": "^9.0.0",
     "morgan": "^1.10.1",
     "multer": "^2.0.2",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
     "uuid": "^13.0.0",
     "winston": "^3.18.3",
     "xss-clean": "^0.1.4"

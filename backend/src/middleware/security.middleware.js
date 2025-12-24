@@ -43,10 +43,15 @@ const securityHeaders = helmet({
 const corsOptions = {
   origin: function (origin, callback) {
     // Allow requests with no origin (mobile apps, Postman, etc.) in development
-    const allowedOrigins = process.env.ALLOWED_ORIGINS 
-      ? process.env.ALLOWED_ORIGINS.split(',')
-      : ['http://localhost:3000'];
-    
+    // const allowedOrigins = process.env.ALLOWED_ORIGINS 
+    //   ? process.env.ALLOWED_ORIGINS.split(',')
+    //   : ['http://localhost:3000'];
+    const allowedOrigins = [
+      'http://localhost:4000',  // Swagger UI
+      'http://localhost:3000',  // React frontend
+      process.env.FRONTEND_URL,
+    ].filter(Boolean);
+
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {

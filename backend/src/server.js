@@ -11,6 +11,8 @@ const connectDB = require("./config/db");
 const logger = require("./config/logger");
 const fs = require("fs-extra");
 const path = require("path");
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./config/swagger');
 
 // Load environment variables
 dotenv.config({ path: "./.env" });
@@ -43,6 +45,15 @@ const { xssProtection, mongoSanitization, hppProtection } = require("./middlewar
 app.use(xssProtection); // XSS protection
 app.use(mongoSanitization); // MongoDB injection protection
 app.use(hppProtection); // HTTP Parameter Pollution protection
+// ==================== SWAGGER DOCS ====================
+app.use(
+  '/api/v1/docs',
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    explorer: true,
+    customSiteTitle: 'Secure Task Manager API Docs',
+  })
+);
 
 // 5. Rate Limiting
 const { generalLimiter, authLimiter } = require("./middleware/rateLimiter.middleware");
@@ -67,7 +78,7 @@ connectDB(process.env.MONGO_URI);
 // ==================== API ROUTES ====================
 // API Versioning - use /api/v1/ prefix
 app.get("/", (req, res) => {
-  res.json({ 
+  res.json({
     message: "Secure Task Manager API",
     version: "1.0.0",
     documentation: "/api/v1/docs"
@@ -104,6 +115,7 @@ fs.ensureDirSync(path.join(__dirname, '../uploads'));
 
 // Start server
 app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
   logger.info(`Server running on port ${PORT}`);
   logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
   logger.info(`HTTPS Enforcement: ${process.env.NODE_ENV === 'production' ? 'Enabled' : 'Disabled'}`);
